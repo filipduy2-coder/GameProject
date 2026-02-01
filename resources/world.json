@@ -1,0 +1,150 @@
+{
+  "locations": [
+    {
+      "id": "Student Dormitory",
+      "description": "A divided dorm with separate areas for nobles and common students.",
+      "items": [],
+      "npcs": [
+        {
+          "name": "Nobleman’s Son: Elian",
+          "health": 100,
+          "strength": 20,
+          "hostile": true,
+          "dialogue": [
+            "Move aside, commoner.",
+            "People like you don’t belong near me.",
+            "Don’t think you’re better than me.",
+            "My father won’t hear about this."
+          ]
+        },
+        {
+          "name": "Dangerous criminal: Rovan",
+          "health": 150,
+          "strength": 40,
+          "hostile": true,
+          "dialogue": [
+            "So you came to stare at the monster… just like everyone else.",
+            "I don’t trust anyone. And you won’t be an exception.",
+            "Don’t look at me like that… I lost, but you didn’t break me.",
+            "The world may have rejected me, but I will never bow."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "Basic Magic Classroom",
+      "description": "Rows of desks, simple magical diagrams on the walls, and a cabinet of teaching tools.",
+      "items": [],
+      "npcs": []
+    },
+    {
+      "id": "Advanced Spell Laboratory",
+      "description": "A large central worktable, instruments and vials on side desks, and marked circles for experiments.",
+      "items": [],
+      "npcs": []
+    },
+    {
+      "id": "Silent Study Room",
+      "description": "Long tables, tall bookshelves, a reading carpet, and a quiet corner with lamps.",
+      "items": [],
+      "npcs": [
+        {
+          "name": "Mia’s friend: Lynne",
+          "health": 100,
+          "strength": 10,
+          "hostile": false,
+          "dialogue": [
+            "Mia, you always look so calm… it’s honestly inspiring.",
+            "Could you come with me for a moment? I want to show you something downstairs.",
+            "Just step inside. I’ll close the door so no one interrupts us.",
+            "Did you really think you could outshine me forever?",
+            "Maybe now you’ll finally understand your place."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "Illusion Classroom",
+      "description": "A nearly empty room with mirrors, an illusion control panel, and marked circles for practice.",
+      "items": [],
+      "npcs": []
+    },
+    {
+      "id": "Healing Magic Department",
+      "description": "Beds for healing practice, herb cabinets, a worktable, and shelves of potions.",
+      "items": [],
+      "npcs": []
+    },
+    {
+      "id": "Magical Supplies Storage",
+      "description": "Shelves of crates and boxes, a sorting table, a locked chest, and an inventory list on the wall.",
+      "items": [],
+      "npcs": []
+    },
+    {
+      "id": "Abandoned Basement",
+      "description": "A forgotten room filled with dust, old supplies, and the secrets of Mia’s disappearance.",
+      "items": [
+        {
+          "name": "Potion of Strength",
+          "description": "A very rare potion. No one would expect to find it in an abandoned room. When consumed, it greatly increases the drinker's strength. Can be used only once.",
+          "type": "USABLE"
+        },
+        {
+          "name": "Totem of Immortality",
+          "description": "A legendary artifact that does not appear under normal circumstances. According to legend, the totem activates automatically when its bearer is on the brink of death, protecting their life and generating a temporary shield.",
+          "type": "AUTO"
+        },
+        {
+          "name": "Gunpowder",
+          "description": "A common material often used in weapon crafting. It has no function on its own — its value appears only when combined with the right materials.",
+          "type": "CRAFTING"
+        },
+        {
+          "name": "Sand",
+          "description": "A basic material with no standalone use. Serves as a raw crafting ingredient.",
+          "type": "CRAFTING"
+        },
+        {
+          "name": "Gravel",
+          "description": "A common material without its own function. Used in crafting.",
+          "type": "CRAFTING"
+        }
+      ],
+      "npcs": []
+    }
+  ],
+  "quests": [
+    {
+      "name": "Defeat Elian",
+      "description": "Elian stands in your way. Defeat him to prove your strength and continue your journey."
+    },
+    {
+      "name": "Craft an explosive",
+      "description": "Gather the necessary materials and craft an improvised explosive device."
+    },
+    {
+      "name": "Defeat the criminal Rovan",
+      "description": "Rovan is a dangerous criminal hiding in the forest. Track him down and defeat him."
+    },
+    {
+      "name": "Find a bone for Togo",
+      "description": "Togo is hungry and needs a bone to feed himself. Search the area and bring him one."
+    }
+  ],
+  "recipes": [
+    {
+      "name": "Explosive",
+      "ingredients": [
+        { "name": "Gunpowder" },
+        { "name": "Sand" },
+        { "name": "Gravel" }
+      ],
+      "result": {
+        "name": "Explosive",
+        "description": "A powerful improvised explosive.",
+        "type": "USABLE"
+      }
+    }
+  ]
+}

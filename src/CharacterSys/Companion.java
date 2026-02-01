@@ -1,4 +1,4 @@
-package Characters;
+package CharacterSys;
 
 public class Companion {
     private boolean hungry;
