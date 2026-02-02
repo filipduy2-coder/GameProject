@@ -1,20 +1,21 @@
 package CommandSys;
 
 import CharacterSys.Player;
-import ItemSys.Item;
 
 public class RemoveItem implements Command{
     private Player player;
-    private Item item;
 
-    public RemoveItem(Player player, Item item) {
+    public RemoveItem(Player player) {
         this.player = player;
-        this.item = item;
     }
 
     @Override
-    public void execute() {
-        player.dropItem(item);
+    public void execute(String[] args) {
+        if (args.length == 0) {
+            System.out.println("Usage: Remove Item <item>");
+            return;
+        }
+        player.dropItem(args[0]);
     }
 
     @Override

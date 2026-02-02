@@ -12,11 +12,6 @@ public class NPC extends Character {
     public void talk() {}
 
     @Override
-    public void attack(Character target) {
-
-    }
-
-    @Override
     public void takeDamage(int amount) {
 
     }

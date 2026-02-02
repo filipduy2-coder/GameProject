@@ -1,11 +1,11 @@
 import CharacterSys.Player;
-import CommandSys.GameEngine;
+import CommandSys.CommandEngine;
 import InitializationSys.World;
 
 public class Game {
     private World world;
     private Player player;
-    private GameEngine engine;
+    private CommandEngine engine;
     private boolean running;
 
     public void start(){}

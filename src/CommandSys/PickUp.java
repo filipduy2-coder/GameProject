@@ -1,19 +1,20 @@
 package CommandSys;
 
 import CharacterSys.Player;
-import ItemSys.Item;
 
 public class PickUp implements Command{
     private Player player;
-    private Item item;
 
-    public PickUp(Player player, Item item) {
+    public PickUp(Player player) {
         this.player = player;
-        this.item = item;
     }
     @Override
-    public void execute() {
-        player.pickUp(item);
+    public void execute(String[] args) {
+        if (args.length == 0) {
+            System.out.println("Usage: Pick Up <item>");
+            return;
+        }
+        player.pickUp(args[0]);
     }
 
     @Override

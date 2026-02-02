@@ -1,22 +1,22 @@
 package CommandSys;
 
 import CharacterSys.Player;
-import ItemSys.Item;
 
 public class UseItem implements Command{
     private Player player;
-    private Item item;
 
-    public UseItem(Player player, Item item) {
+    public UseItem(Player player) {
         this.player = player;
-        this.item = item;
     }
 
     @Override
-    public void execute() {
-        player.useItem(item);
+    public void execute(String[] args) {
+        if (args.length == 0) {
+            System.out.println("Usage: Use Item <item>");
+            return;
+        }
+        player.useItem(args[0]);
     }
-
     @Override
     public String getName() {
         return "Use Item";

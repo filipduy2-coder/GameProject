@@ -28,14 +28,14 @@ public class JsonWorldLoader {
             loadRecipes(world, root.get("recipes"));
 
         } catch (Exception e) {
-            throw new RuntimeException("Chyba při načítání world.json", e);
+            throw new RuntimeException("Fail to load world.json", e);
         }
     }
 
     private static void loadLocations(World world, JsonNode arr) {
         for (JsonNode obj : arr) {
             Location loc = new Location(
-                    obj.get("id").asText(),
+                    obj.get("id").asText().toLowerCase(),
                     obj.get("description").asText(),
                     new HashMap<>(),
                     LocationType.ACADEMY

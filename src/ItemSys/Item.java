@@ -14,4 +14,7 @@ public class Item {
     public String getName() {
         return name;
     }
+    public ItemType getType() {
+        return type;
+    }
 }

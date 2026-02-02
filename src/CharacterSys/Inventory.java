@@ -8,15 +8,51 @@ public class Inventory {
     private List<Item> items;
     private int capacity;
 
-    public void addItem(Item item) {
+    public Inventory(List<Item> items, int capacity) {
+        this.items = items;
+        this.capacity = capacity;
     }
 
-    public void removeItem(Item item){}
+    public boolean addItem(Item item) {
+        if (isFull()) return false;
+        items.add(item);
+        return true;
+    }
 
-    public boolean hasItem(Item item){return false;}
+    public boolean removeItem(Item item) {
+        return items.remove(item);
+    }
 
-    public boolean isFull(){return false;}
+    public boolean hasItem(String name) {
+        for (Item i : items) {
+            if (i.getName().equalsIgnoreCase(name)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
-    public int getFreeSlots() {return 0;}
+    public Item getItem(String name) {
+        for (Item i : items) {
+            if (i.getName().equalsIgnoreCase(name)) {
+                return i;
+            }
+        }
+        return null;
+    }
 
+    public boolean isFull() {
+        return items.size() >= capacity;
+    }
+    public int getFreeSlots() {
+        return capacity - items.size();
+    }
+    public List<Item> getItems() {
+        return items;
+    }
+    public void printInventory() {
+        for (Item i : items) {
+            System.out.println(i.getName());
+        }
+    }
 }

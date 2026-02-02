@@ -40,9 +40,20 @@ public class Location {
     public LocationType getType() {
         return type;
     }
-
+    public Map<String, Location> getNeighbours() {
+        return neighbours;
+    }
     public List<Item> getItems() {
         return items;
+    }
+    public Item getItem(String itemName) {
+        for (Item item : items) {
+            if (item.getName().equals(itemName)) return item;
+        }
+        return null;
+    }
+    public void removeItem(String itemName) {
+        items.removeIf(item -> item.getName().equals(itemName));
     }
 
     @Override

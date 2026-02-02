@@ -33,13 +33,13 @@ public class WorldBuilder {
             for (int col = 0; col < 5; col++) {
                 Location loc = forest[row][col];
                 if (row > 0)
-                    loc.addNeighbour("north", forest[row - 1][col]);
+                    loc.addNeighbour("N", forest[row - 1][col]);
                 if (row < 4)
-                    loc.addNeighbour("south", forest[row + 1][col]);
+                    loc.addNeighbour("S", forest[row + 1][col]);
                 if (col > 0)
-                    loc.addNeighbour("west", forest[row][col - 1]);
+                    loc.addNeighbour("W", forest[row][col - 1]);
                 if (col < 4)
-                    loc.addNeighbour("east", forest[row][col + 1]);
+                    loc.addNeighbour("E", forest[row][col + 1]);
             }
         }
     }
@@ -52,7 +52,7 @@ public class WorldBuilder {
     }
     private static void connectAcademyToWorld(World world) {
         Location entry = world.getAcademyEntryBlock();
-        Location destination = world.getLocationByName("Basic Magic Classroom");
+        Location destination = world.getLocationByName("basic magic classroom");
 
         if (entry == null || destination == null) {
             System.out.println("Error: academy entry or destination not found");

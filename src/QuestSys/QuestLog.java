@@ -13,5 +13,14 @@ import java.util.List;
             activeQuests.remove(quest);
             completedQuests.add(quest);
         }
-
+        public void printActiveQuests() {
+            for (Quest quest : activeQuests) {
+                System.out.println(quest);
+            }
+        }
+        public void printCompletedQuests() {
+            for (Quest quest : completedQuests) {
+                System.out.println(quest);
+            }
+        }
     }

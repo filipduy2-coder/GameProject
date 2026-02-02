@@ -1,25 +1,23 @@
 package CommandSys;
-
 import CharacterSys.Player;
 
-public class Go implements Command {
+public class Attack implements Command{
     private Player player;
 
-    public Go(Player player) {
+    public Attack(Player player) {
         this.player = player;
     }
 
     @Override
-    public void execute(String [] args) {
+    public void execute(String[] args) {
         if (args.length == 0) {
-            System.out.println("Usage: Go <target>");
+            System.out.println("Usage: Attack <npc>");
             return;
         }
-        player.go(args[0]);
+        player.attack(args[0]);
     }
-
     @Override
     public String getName() {
-        return "Go";
+        return "Attack";
     }
 }

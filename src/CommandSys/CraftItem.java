@@ -1,21 +1,23 @@
 package CommandSys;
 
 import CharacterSys.Player;
-import ItemSys.Recipe;
 
 public class CraftItem implements Command{
     private Player player;
-    private Recipe recipe;
 
-    public CraftItem(Player player, Recipe recipe) {
+    public CraftItem(Player player) {
         this.player = player;
-        this.recipe = recipe;
     }
 
     @Override
-    public void execute() {
-        player.craftItem(recipe);
+    public void execute(String[] args) {
+        if (args.length == 0) {
+            System.out.println("Usage: Craft <item>");
+            return;
+        }
+        player.craftItem(args[0]);
     }
+
 
     @Override
     public String getName() {

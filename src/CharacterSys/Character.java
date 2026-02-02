@@ -14,6 +14,5 @@ public abstract class Character {
     }
 
     public boolean isAlive() {return true;};
-    public abstract void attack(Character target);
     public abstract void takeDamage(int amount);
 }

@@ -1,21 +1,23 @@
 package CommandSys;
 
-import CharacterSys.NPC;
 import CharacterSys.Player;
 
 public class TalkTo implements Command{
     private Player player;
-    private NPC npc;
 
-    public TalkTo(Player player, NPC npc) {
+    public TalkTo(Player player) {
         this.player = player;
-        this.npc = npc;
     }
 
     @Override
-    public void execute() {
-        player.talkTo(npc);
+    public void execute(String[] args) {
+        if (args.length == 0) {
+            System.out.println("Usage: Dialogue <npc>");
+            return;
+        }
+        player.talkTo(args[0]);
     }
+
 
     @Override
     public String getName() {

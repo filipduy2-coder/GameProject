@@ -10,7 +10,7 @@ public class ShowQuestLog implements Command{
     }
 
     @Override
-    public void execute() {
+    public void execute(String[] args) {
         player.showQuestLog();
     }
 
