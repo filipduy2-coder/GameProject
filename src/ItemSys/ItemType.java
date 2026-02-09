@@ -1,7 +1,7 @@
-package ItemSys;
+    package ItemSys;
 
-public enum ItemType {
-    AUTO,
-    USABLE,
-    CRAFTING
-}
+    public enum ItemType {
+        AUTO,
+        USABLE,
+        CRAFTING
+    }

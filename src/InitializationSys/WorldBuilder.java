@@ -1,16 +1,16 @@
 package InitializationSys;
 
+import CharacterSys.Player;
+import Script.ScriptEngine;
+
 import java.util.HashMap;
 import java.util.Random;
 
 public class WorldBuilder {
-    public static World buildWorld() {
-        World world = new World();
+    public static void buildWorld(World world) {
         initForest(world);
         connectForestNeighbours(world);
         placeAcademyEntryBlock(world);
-        connectAcademyToWorld(world);
-        return world;
     }
 
     private static void initForest(World world) {
@@ -46,18 +46,27 @@ public class WorldBuilder {
 
     private static void placeAcademyEntryBlock(World world) {
         Random r = new Random();
-        int row = r.nextInt(5);
-        int col = r.nextInt(5);
-        world.setAcademyEntryBlock(world.getForest()[row][col]);
+        Location start = world.getStartingLocation();
+        Location chosen;
+        do {
+            int row = r.nextInt(5);
+            int col = r.nextInt(5);
+            chosen = world.getForest()[row][col];
+        } while (chosen == start);
+        world.setAcademyEntryBlock(chosen);
     }
-    private static void connectAcademyToWorld(World world) {
-        Location entry = world.getAcademyEntryBlock();
-        Location destination = world.getLocationByName("basic magic classroom");
-
-        if (entry == null || destination == null) {
-            System.out.println("Error: academy entry or destination not found");
-            return;
+    public static void buildScript(World world, ScriptEngine scriptEngine, Player player) {
+        scriptEngine.addStep("Basic Magic Classroom","Advanced Spell Laboratory");
+        scriptEngine.addStep("Advanced Spell Laboratory","Silent Study Room");
+        scriptEngine.addStep("Silent Study Room","Illusion Classroom");
+        scriptEngine.addStep("Illusion Classroom","Healing Magic Department");
+        scriptEngine.addStep("Healing Magic Department","Magical Supplies Storage");
+        scriptEngine.addStep("Magical Supplies Storage","Student Dormitory");
+        if (!world.getLocationByName("student dormitory").hasNPC("Elian")) {
+            scriptEngine.addStep("Student Dormitory","Silent Study Room");
         }
-        entry.addNeighbour("academy", destination);
+        if (player.isEscapedBasement()) {
+            scriptEngine.addStep("Silent Study Room","Student Dormitory");
+        }
     }
 }

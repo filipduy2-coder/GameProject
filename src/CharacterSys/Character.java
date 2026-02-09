@@ -1,18 +1,19 @@
 package CharacterSys;
 
 public abstract class Character {
-    private String name;
-    private int health;
-    private int strength;
-    private boolean hostile;
+    protected String name;
+    protected int health;
+    protected int strength;
 
-    public Character(String name, int health, int strength, boolean hostile) {
+    public Character(String name, int health, int strength) {
         this.name = name;
         this.health = health;
         this.strength = strength;
-        this.hostile = hostile;
     }
 
-    public boolean isAlive() {return true;};
+    public boolean isAlive() {return health > 0;};
     public abstract void takeDamage(int amount);
+    public String getName(){return name;}
+    public int getHealth(){return health;}
+    public int getStrength(){return strength;}
 }

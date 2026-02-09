@@ -6,25 +6,31 @@
       "items": [],
       "npcs": [
         {
-          "name": "Nobleman’s Son: Elian",
+          "name": "Elian",
           "health": 100,
           "strength": 20,
           "hostile": true,
-          "dialogue": [
+          "startsCombat": true,
+          "preActionDialogue": [
             "Move aside, commoner.",
-            "People like you don’t belong near me.",
+            "People like you don’t belong near me."
+          ],
+          "postActionDialogue": [
             "Don’t think you’re better than me.",
             "My father won’t hear about this."
           ]
         },
         {
-          "name": "Dangerous criminal: Rovan",
+          "name": "Rovan",
           "health": 150,
           "strength": 40,
           "hostile": true,
-          "dialogue": [
+          "startsCombat": true,
+          "preActionDialogue": [
             "So you came to stare at the monster… just like everyone else.",
-            "I don’t trust anyone. And you won’t be an exception.",
+            "I don’t trust anyone. And you won’t be an exception."
+          ],
+          "postActionDialogue": [
             "Don’t look at me like that… I lost, but you didn’t break me.",
             "The world may have rejected me, but I will never bow."
           ]
@@ -49,14 +55,17 @@
       "items": [],
       "npcs": [
         {
-          "name": "Mia’s friend: Lynne",
+          "name": "Lynne",
           "health": 100,
           "strength": 10,
           "hostile": false,
-          "dialogue": [
+          "startsCombat": false,
+          "preActionDialogue": [
             "Mia, you always look so calm… it’s honestly inspiring.",
             "Could you come with me for a moment? I want to show you something downstairs.",
-            "Just step inside. I’ll close the door so no one interrupts us.",
+            "Just step inside. I’ll close the door so no one interrupts us."
+          ],
+          "postActionDialogue": [
             "Did you really think you could outshine me forever?",
             "Maybe now you’ll finally understand your place."
           ]
@@ -88,27 +97,36 @@
         {
           "name": "Potion of Strength",
           "description": "A very rare potion. No one would expect to find it in an abandoned room. When consumed, it greatly increases the drinker's strength. Can be used only once.",
-          "type": "USABLE"
+          "type": "USABLE",
+          "properties": {
+            "strengthMultiplier": 2.0
+          }
         },
         {
           "name": "Totem of Immortality",
           "description": "A legendary artifact that does not appear under normal circumstances. According to legend, the totem activates automatically when its bearer is on the brink of death, protecting their life and generating a temporary shield.",
-          "type": "AUTO"
+          "type": "AUTO",
+          "properties": {
+            "reviveHealth": 50
+          }
         },
         {
           "name": "Gunpowder",
           "description": "A common material often used in weapon crafting. It has no function on its own — its value appears only when combined with the right materials.",
-          "type": "CRAFTING"
+          "type": "CRAFTING",
+          "properties": {}
         },
         {
           "name": "Sand",
           "description": "A basic material with no standalone use. Serves as a raw crafting ingredient.",
-          "type": "CRAFTING"
+          "type": "CRAFTING",
+          "properties": {}
         },
         {
           "name": "Gravel",
           "description": "A common material without its own function. Used in crafting.",
-          "type": "CRAFTING"
+          "type": "CRAFTING",
+          "properties": {}
         }
       ],
       "npcs": []
@@ -117,19 +135,33 @@
   "quests": [
     {
       "name": "Defeat Elian",
-      "description": "Elian stands in your way. Defeat him to prove your strength and continue your journey."
+      "description": "Elian stands in your way. Defeat him to prove your strength and continue your journey.",
+      "trigger": "talk_to_npc:Elian",
+      "completion": "defeat_enemy:Elian"
     },
     {
       "name": "Craft an explosive",
-      "description": "Gather the necessary materials and craft an improvised explosive device."
+      "description": "Gather the necessary materials and craft an improvised explosive device.",
+      "trigger": "enter_location:Abandoned Basement",
+      "completion": "craft_item:Explosive"
+    },
+    {
+      "name": "Find Exit",
+      "description": "Use your crafted explosive to blow the exit door and escape the basement.",
+      "trigger": "craft_item:Explosive",
+      "completion": "use_item:Explosive"
     },
     {
       "name": "Defeat the criminal Rovan",
-      "description": "Rovan is a dangerous criminal hiding in the forest. Track him down and defeat him."
+      "description": "Rovan is a dangerous criminal hiding in the forest. Track him down and defeat him.",
+      "trigger": "talk_to_npc:Rovan",
+      "completion": "defeat_enemy:Rovan"
     },
     {
       "name": "Find a bone for Togo",
-      "description": "Togo is hungry and needs a bone to feed himself. Search the area and bring him one."
+      "description": "Togo is hungry and needs a bone to feed himself. Search the area and bring him one.",
+      "trigger": null,
+      "completion": "pickup_item:Bone"
     }
   ],
   "recipes": [
@@ -143,7 +175,11 @@
       "result": {
         "name": "Explosive",
         "description": "A powerful improvised explosive.",
-        "type": "USABLE"
+        "type": "USABLE",
+        "properties": {
+          "explode": "The explosive detonates and blows open the door!",
+          "usabledOnlyIn": "Abandoned Basement"
+        }
       }
     }
   ]

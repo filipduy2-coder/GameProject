@@ -13,6 +13,7 @@ public class TalkTo implements Command{
     public void execute(String[] args) {
         if (args.length == 0) {
             System.out.println("Usage: Dialogue <npc>");
+            System.out.println("ALl npcs in current location: " + player.getCurrentLocation().getAllNPCs());
             return;
         }
         player.talkTo(args[0]);

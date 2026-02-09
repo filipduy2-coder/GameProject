@@ -46,14 +46,46 @@ public class Location {
     public List<Item> getItems() {
         return items;
     }
+    public String getAllItems() {
+        for (Item item : items) {
+            return item.getName();
+        }
+        return null;
+    }
+    public String getAllNPCs() {
+        for (NPC npc : npcs) {
+            return npc.getName();
+        }
+        return null;
+    }
+    public NPC getNPCByName(String name) {
+        for (NPC npc : npcs) {
+            if (npc.getName().equals(name)) {
+                return npc;
+            }
+        }
+        return null;
+    }
     public Item getItem(String itemName) {
         for (Item item : items) {
             if (item.getName().equals(itemName)) return item;
         }
         return null;
     }
+    public String getDescription() {
+        return description;
+    }
     public void removeItem(String itemName) {
         items.removeIf(item -> item.getName().equals(itemName));
+    }
+    public void removeNPC(NPC npc) {
+        npcs.remove(npc);
+    }
+    public boolean hasNPC(String name) {
+        for (NPC npc : npcs) {
+            if (npc.getName().equals(name)) return true;
+        }
+        return false;
     }
 
     @Override

@@ -16,6 +16,6 @@ public class ShowQuestLog implements Command{
 
     @Override
     public String getName() {
-        return "Show Quest Log";
+        return "Show QuestLog";
     }
 }

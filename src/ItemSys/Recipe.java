@@ -12,6 +12,18 @@ public class Recipe {
         this.ingredients = ingredients;
         this.result = result;
     }
+
+    public String getName() {
+        return name;
+    }
+
+    public List<Item> getIngredients() {
+        return ingredients;
+    }
+
+    public Item getResult() {
+        return result;
+    }
 }
 
 

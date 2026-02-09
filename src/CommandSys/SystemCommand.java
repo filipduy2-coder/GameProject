@@ -1,5 +1,7 @@
 package CommandSys;
 
+import InitializationSys.Game;
+
 import java.util.List;
 
 public class SystemCommand implements Command{
@@ -7,28 +9,30 @@ public class SystemCommand implements Command{
     private Type type;
     private String hint;
     private List<Command> commands;
-
-    public SystemCommand(Type type, String hint, List<Command> commands) {
+    private Game game;
+    public SystemCommand(Type type, String hint, List<Command> commands, Game game) {
         this.type = type;
         this.hint = hint;
         this.commands = commands;
+        this.game = game;
     }
 
-    public static SystemCommand exit() {
-        return new SystemCommand(Type.EXIT, null, null);
+    public static SystemCommand exit(Game game) {
+        return new SystemCommand(Type.EXIT, null, null,game);
     }
     public static SystemCommand help(List<Command> commands) {
-        return new SystemCommand(Type.HELP, null, commands);
+        return new SystemCommand(Type.HELP, null, commands,null);
     }
     public static SystemCommand hint(String hint) {
-        return new SystemCommand(Type.HINT, hint, null);
+        return new SystemCommand(Type.HINT, hint, null,null);
     }
     @Override
     public void execute(String[] args) {
         switch (type) {
             case EXIT -> {
-                System.out.println("Quitting...");
-                System.exit(0);
+                if (game != null) {
+                    game.setRunning(false);
+                }
             }
             case HELP -> {
                 System.out.println("Available commands:");

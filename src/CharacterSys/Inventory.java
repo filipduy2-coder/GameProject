@@ -32,7 +32,7 @@ public class Inventory {
         return false;
     }
 
-    public Item getItem(String name) {
+    public Item getItemByName(String name) {
         for (Item i : items) {
             if (i.getName().equalsIgnoreCase(name)) {
                 return i;

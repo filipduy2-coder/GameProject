@@ -1,21 +1,26 @@
 package CommandSys;
 
 import CharacterSys.Player;
+import InitializationSys.Game;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static InitializationSys.GameState.*;
 
 public class CommandManager {
+    private final Game game;
+    public CommandManager(Game game) {
+        this.game = game;
+    }
     public List<Command> getCombatCommands(Player p) {
         List<Command> cmds =  List.of(
                 new Attack(p),
+                new TalkTo(p),
                 new UseItem(p),
                 new ShowInventory(p),
                 new ShowQuestLog(p),
                 SystemCommand.hint(null),
-                SystemCommand.exit()
+                SystemCommand.exit(game)
         );
         List<Command> finalCmds = new ArrayList<>(cmds);
         finalCmds.add(SystemCommand.help(finalCmds));
@@ -24,13 +29,14 @@ public class CommandManager {
 
     public List<Command> getNormalCommands(Player p) {
         List<Command> cmds =  List.of(
+                new Go(p),
                 new ShowInventory(p),
                 new ShowQuestLog(p),
                 new PickUp(p),
                 new RemoveItem(p),
                 new TalkTo(p),
                 SystemCommand.hint(null),
-                SystemCommand.exit()
+                SystemCommand.exit(game)
         );
         List<Command> finalCmds = new ArrayList<>(cmds);
         finalCmds.add(SystemCommand.help(finalCmds));
@@ -40,12 +46,13 @@ public class CommandManager {
     public List<Command> getTrappedCommands(Player p) {
         List<Command> cmds =  List.of(
                 new CraftItem(p),
+                new UseItem(p),
                 new ShowInventory(p),
                 new ShowQuestLog(p),
                 new PickUp(p),
                 new RemoveItem(p),
                 SystemCommand.hint(null),
-                SystemCommand.exit()
+                SystemCommand.exit(game)
         );
         List<Command> finalCmds = new ArrayList<>(cmds);
         finalCmds.add(SystemCommand.help(finalCmds));

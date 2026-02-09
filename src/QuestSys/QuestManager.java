@@ -1,31 +1,50 @@
 package QuestSys;
 
+import CharacterSys.Player;
+
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class QuestManager {
     private Map<String, Quest> quests = new HashMap<>();
 
-    public void addQuest(Quest quest) {
-        quests.put(quest.getName(), quest);
-    }
-
-    public Quest getQuest(String questName) {
-        return quests.get(questName);
-    }
-
-    public boolean hasQuest(String questName) {
-        return quests.containsKey(questName);
-    }
-
-    public void completeQuest(String questName) {
-        Quest  quest = quests.get(questName);
-        if (quest != null) {
-            quest.complete();
+    public void loadQuests(List<Quest> load) {
+        for (Quest quest : load) {
+            quests.put(quest.getName(), quest);
         }
     }
-    public Map<String, Quest> getAllQuests() {
-        return quests;
+    public void checkTrigger(String event, Player player) {
+        for (Quest quest : quests.values()) {
+            if (!quest.isActive() && !quest.isCompleted()) {
+                if (event.equals(quest.getTrigger())) {
+                    quest.setActive(true);
+                    player.getQuestLog().addQuest(quest);
+                    System.out.println("New quest: " + quest.getName());
+                }
+            }
+        }
     }
-
+    public void checkCompletion(String event, Player player) {
+        for (Quest quest : quests.values()) {
+            if (quest.isActive() && !quest.isCompleted()) {
+                if (event.equals(quest.getCompletion())) {
+                    quest.setActive(false);
+                    quest.setCompleted(true);
+                    player.getQuestLog().completeQuest(quest);
+                    System.out.println("Quest completed: " + quest.getName());
+                }
+            }
+        }
+    }
+    public void activeQuestByName(String questName, Player player) {
+        for (Quest quest : quests.values()) {
+            if (quest.getName().equals(questName)) {
+                quest.setActive(true);
+                quest.setCompleted(false);
+                player.getQuestLog().addQuest(quest);
+                System.out.println("Quest activated: " + quest.getName());
+            }
+        }
+    }
 }

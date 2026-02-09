@@ -11,14 +11,24 @@ public class CommandEngine {
             commands.put(c.getName().toLowerCase(), c);
         }
     }
+    public List<Command> getCommandList() {
+        return new ArrayList<>(commands.values());
+    }
 
     public void handleInput(String input) {
-        String[] parts = input.split(" ");
-        String commandName = parts[0];
+        String[] parts = input.trim().split("\\s+");
+        String commandName = parts[0].toLowerCase();
         String[] args =  Arrays.copyOfRange(parts, 1, parts.length);
         Command cmd = commands.get(commandName);
+        if (cmd == null && parts.length > 1) {
+            String twoWord = (parts[0] + " " + parts[1]).toLowerCase();
+            cmd = commands.get(twoWord);
+            if (cmd != null) {
+                args = Arrays.copyOfRange(parts, 2, parts.length);
+            }
+        }
         if (cmd == null) {
-            System.out.println("Command " + commandName + " not found");
+            System.out.println("Command " + parts[0] + " not found");
         } else {
             cmd.execute(args);
         }
@@ -26,8 +36,11 @@ public class CommandEngine {
 
     public void printMenu(List<Command> commands) {
         System.out.println("Choose one of the following commands:");
-        for (int i = 0; i<commands.size(); i++) {
-            System.out.println((i+1) + ") " + commands.get(i).getName());
+        for (Command c : commands) {
+            String name = c.getName().toLowerCase();
+            if (name.equals("help") || name.equals("exit") || name.equals("hint") || name.equals("go")) {
+                System.out.println(" - " + c.getName());
+            }
         }
     }
 }

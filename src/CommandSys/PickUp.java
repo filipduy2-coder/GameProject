@@ -12,6 +12,7 @@ public class PickUp implements Command{
     public void execute(String[] args) {
         if (args.length == 0) {
             System.out.println("Usage: Pick Up <item>");
+            System.out.println("All items in current location: " + player.getCurrentLocation().getAllItems());
             return;
         }
         player.pickUp(args[0]);
