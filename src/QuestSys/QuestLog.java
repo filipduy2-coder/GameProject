@@ -17,7 +17,7 @@ import java.util.List;
         public void printActiveQuests() {
             System.out.println("Active quests:");
             for (Quest quest : activeQuests) {
-                System.out.println(" - " + quest);
+                System.out.println(" - " + quest.getName());
             }
         }
         public void printCompletedQuests() {

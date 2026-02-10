@@ -46,17 +46,20 @@ public class Location {
     public List<Item> getItems() {
         return items;
     }
-    public String getAllItems() {
+
+    public List<String> getAllItems() {
+        List<String> names = new ArrayList<>();
         for (Item item : items) {
-            return item.getName();
+            names.add(item.getName());
         }
-        return null;
+        return names;
     }
-    public String getAllNPCs() {
+    public List<String> getAllNPCs() {
+        List<String> names = new ArrayList<>();
         for (NPC npc : npcs) {
-            return npc.getName();
+            names.add(npc.getName());
         }
-        return null;
+        return names;
     }
     public NPC getNPCByName(String name) {
         for (NPC npc : npcs) {

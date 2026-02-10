@@ -70,9 +70,6 @@ public class Player extends Character {
                     System.out.println("You can't return to the basement. The entrance collapsed");
                     return;
                 }
-                if (next.getId().equals("Abandoned Basement") && !escapedBasement) {
-                    enterTrapped();
-                }
                 currentLocation = next;
                 System.out.println("You entered" + next.getId());
             }
@@ -129,7 +126,7 @@ public class Player extends Character {
 
     public void pickUp(String itemName) {
         Item item = currentLocation.getItem(itemName);
-        if (item == null) {
+        if (item == null && !inventory.isFull()) {
             System.out.println("No such item here.");
             return;
         }
@@ -297,6 +294,11 @@ public class Player extends Character {
     public void setCurrentLocation(Location currentLocation) {
         this.currentLocation = currentLocation;
     }
+
+    public void setState(GameState state) {
+        this.state = state;
+    }
+
     @Override
     public void takeDamage(int amount) {
         health -= amount;

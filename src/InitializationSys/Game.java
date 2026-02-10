@@ -85,6 +85,9 @@ public class Game {
             System.out.println("You step into the academy.");
             player.forceMoveTo("Basic Magic Classroom");
         }
+        if (player.getCurrentLocation().getId().equals("Abandoned Basement") && !player.isEscapedBasement()) {
+            player.setState(GameState.TRAPPED);
+        }
         questManager.checkTrigger("enter_location:" + loc.getId(),player);
     }
 
