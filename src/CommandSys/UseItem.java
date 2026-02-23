@@ -1,13 +1,10 @@
 package CommandSys;
 
 import CharacterSys.Player;
+import InitializationSys.ActionType;
+import InitializationSys.Game;
 
-public class UseItem implements Command{
-    private Player player;
-
-    public UseItem(Player player) {
-        this.player = player;
-    }
+public record UseItem(Player player, Game game) implements Command {
 
     @Override
     public void execute(String[] args) {
@@ -15,10 +12,16 @@ public class UseItem implements Command{
             System.out.println("Usage: Use Item <item>");
             return;
         }
-        player.useItem(args[0]);
+        String itemName = String.join(" ", args);
+        boolean success = player.useItem(itemName, game);
+        if (success) {
+            game.setLastEvent(ActionType.USE_ITEM, itemName.toLowerCase().trim());
+            game.onActionResolved();
+        }
     }
+
     @Override
     public String getName() {
-        return "Use Item";
+        return "Use";
     }
 }

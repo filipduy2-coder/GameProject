@@ -2,12 +2,7 @@ package CommandSys;
 
 import CharacterSys.Player;
 
-public class ShowInventory implements Command{
-    private Player player;
-
-    public ShowInventory(Player player) {
-        this.player = player;
-    }
+public record ShowInventory(Player player) implements Command {
 
     @Override
     public void execute(String[] args) {

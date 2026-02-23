@@ -2,12 +2,7 @@ package CommandSys;
 
 import CharacterSys.Player;
 
-public class ShowQuestLog implements Command{
-    private Player player;
-
-    public ShowQuestLog(Player player) {
-        this.player = player;
-    }
+public record ShowQuestLog(Player player) implements Command {
 
     @Override
     public void execute(String[] args) {

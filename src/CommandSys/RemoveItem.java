@@ -1,13 +1,10 @@
 package CommandSys;
 
 import CharacterSys.Player;
+import InitializationSys.ActionType;
+import InitializationSys.Game;
 
-public class RemoveItem implements Command{
-    private Player player;
-
-    public RemoveItem(Player player) {
-        this.player = player;
-    }
+public record RemoveItem(Player player, Game game) implements Command {
 
     @Override
     public void execute(String[] args) {
@@ -15,11 +12,16 @@ public class RemoveItem implements Command{
             System.out.println("Usage: Remove Item <item>");
             return;
         }
-        player.dropItem(args[0]);
+        String itemName = String.join(" ", args);
+        boolean success = player.dropItem(itemName);
+        if (success) {
+            game.setLastEvent(ActionType.DROP_ITEM, itemName.toLowerCase().trim());
+            game.onActionResolved();
+        }
     }
 
     @Override
     public String getName() {
-        return "Remove Item";
+        return "Remove";
     }
 }

@@ -1,13 +1,10 @@
 package CommandSys;
 
 import CharacterSys.Player;
+import InitializationSys.ActionType;
+import InitializationSys.Game;
 
-public class CraftItem implements Command{
-    private Player player;
-
-    public CraftItem(Player player) {
-        this.player = player;
-    }
+public record CraftItem(Player player, Game game) implements Command {
 
     @Override
     public void execute(String[] args) {
@@ -15,7 +12,12 @@ public class CraftItem implements Command{
             System.out.println("Usage: Craft <item>");
             return;
         }
-        player.craftItem(args[0]);
+        String itemName = String.join(" ", args);
+        boolean success = player.craftItem(itemName);
+        if (success) {
+            game.setLastEvent(ActionType.CRAFT_ITEM, itemName.toLowerCase().trim());
+            game.onActionResolved();
+        }
     }
 
 

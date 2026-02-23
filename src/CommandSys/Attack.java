@@ -1,12 +1,9 @@
 package CommandSys;
 import CharacterSys.Player;
+import InitializationSys.ActionType;
+import InitializationSys.Game;
 
-public class Attack implements Command{
-    private Player player;
-
-    public Attack(Player player) {
-        this.player = player;
-    }
+public record Attack(Player player, Game game) implements Command {
 
     @Override
     public void execute(String[] args) {
@@ -14,8 +11,14 @@ public class Attack implements Command{
             System.out.println("Usage: Attack <npc>");
             return;
         }
-        player.attack(args[0]);
+        String enemyName = String.join(" ", args);
+        boolean success = player.attack(enemyName);
+        if (success) {
+            game.setLastEvent(ActionType.ATTACK, enemyName.toLowerCase().trim());
+            game.onActionResolved();
+        }
     }
+
     @Override
     public String getName() {
         return "Attack";

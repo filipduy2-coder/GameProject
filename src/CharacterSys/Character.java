@@ -11,9 +11,14 @@ public abstract class Character {
         this.strength = strength;
     }
 
-    public boolean isAlive() {return health > 0;};
+    public boolean isAlive() {return health > 0;}
     public abstract void takeDamage(int amount);
     public String getName(){return name;}
     public int getHealth(){return health;}
+
+    public void setHealth(int health) {
+        this.health = health;
+    }
+
     public int getStrength(){return strength;}
 }

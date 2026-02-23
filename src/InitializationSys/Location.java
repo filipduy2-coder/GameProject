@@ -8,14 +8,31 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Reprezentuje jednu lokaci ve hře.
+ * Slouží jako základní stavební prvek herního světa.
+ *
+ * Lokace může obsahovat předměty, NPC a může být propojena s jinými
+ * lokacemi pomocí směrových vazeb.
+ *
+ * @author Filip
+ */
 public class Location {
-    private String id;
+    private final String id;
     private String description;
-    private Map<String, Location> neighbours = new HashMap<>();
+    private Map<String, Location> neighbours;
     private List<Item> items;
-    private List<NPC> npcs;
+    private final List<NPC> npcs;
     private LocationType type;
 
+    /**
+     * Vytvoří novou lokaci s kompletní konfigurací
+     *
+     * @param name identifikátor lokace
+     * @param description textový popis lokace
+     * @param neighbours mapa sousedních lokací podle směru
+     * @param type typ lokace (např. ACADEMY, FOREST)
+     */
     public Location(String name, String description, Map<String, Location> neighbours, LocationType type) {
         this.id = name;
         this.description = description;
@@ -25,73 +42,149 @@ public class Location {
         this.type = type;
     }
 
+    /**
+     * Vytvoří lokaci pouze s identifikátorem. Používá se pro jednoduché
+     * nebo později inicializované lokace.
+     *
+     * @param name identifikátor lokace
+     */
+    public Location(String name) {
+        this.id = name;
+        this.npcs = new ArrayList<>();
+    }
+
+    /**
+     * Přidá sousední lokaci pod daným směrem.
+     *
+     * @param direction směr (např. "N", "south", "left")
+     * @param neighbour sousední lokace
+     */
     public void addNeighbour(String direction, Location neighbour) {
         neighbours.put(direction, neighbour);
     }
+
+    /**
+     * Přidá předmět do lokace.
+     *
+     * @param item předmět, který má být přidán
+     */
     public void addItem(Item item) {
         items.add(item);
     }
+
+    /**
+     * Přidá NPC do lokace.
+     *
+     * @param npc NPC, které má být přidáno
+     */
     public void addNPC(NPC npc) {
         npcs.add(npc);
     }
-    public String getId() {
-        return id;
+
+    /**
+     * Odstraní item z lokace podle názvu.
+     *
+     * @param itemName název itemu
+     */
+    public void removeItem(String itemName) {
+        items.removeIf(item -> item.getName().equals(itemName));
     }
-    public LocationType getType() {
-        return type;
+
+    /**
+     * Odstraní NPC z lokace.
+     *
+     * @param npc NPC, které má být odstraněno
+     */
+    public void removeNPC(NPC npc) {
+        npcs.remove(npc);
     }
-    public Map<String, Location> getNeighbours() {
-        return neighbours;
-    }
-    public List<Item> getItems() {
-        return items;
-    }
+
+    /**
+     * Vrátí seznam všech itemů v lokaci jako text.
+     * Pokud zde žádné itemy nejsou, vrací "None".
+     *
+     * @return textový seznam itemů
+     */
     public String getAllItems() {
+        if (items.isEmpty())
+            return "None";
+        StringBuilder sb = new StringBuilder();
         for (Item item : items) {
-            return item.getName();
+            sb.append(item.getName()).append(", ");
         }
-        return null;
+        return sb.substring(0, sb.length() - 2);
     }
+
+    /**
+     * Vrátí seznam všech NPC v lokaci jako text.
+     * Pokud zde žádné NPC nejsou, vrací "None".
+     *
+     * @return textový seznam NPC
+     */
     public String getAllNPCs() {
-        for (NPC npc : npcs) {
-            return npc.getName();
+        if (npcs.isEmpty()) {
+            return "None";
         }
-        return null;
+        StringBuilder sb = new StringBuilder();
+        for (NPC npc : npcs) {
+            sb.append(npc.getName()).append(", ");
+        }
+        return sb.substring(0, sb.length() - 2);
     }
+
+    /**
+     * Vyhledá NPC podle jména (nerozlišuje velikost písmen).
+     *
+     * @param name jméno NPC
+     * @return nalezené NPC nebo null, pokud neexistuje
+     */
     public NPC getNPCByName(String name) {
         for (NPC npc : npcs) {
-            if (npc.getName().equals(name)) {
+            if (npc.getName().equalsIgnoreCase(name)) {
                 return npc;
             }
         }
         return null;
     }
-    public Item getItem(String itemName) {
+
+    /**
+     * Vyhledá item podle jména.
+     *
+     * @param itemName název itemu
+     * @return nalezený item nebo null, pokud neexistuje
+     */
+    public Item getItemByName(String itemName) {
         for (Item item : items) {
             if (item.getName().equals(itemName)) return item;
         }
         return null;
     }
+    public String getId() {
+        return id;
+    }
+
+    public LocationType getType() {
+        return type;
+    }
+
+    public Map<String, Location> getNeighbours() {
+        return neighbours;
+    }
+
     public String getDescription() {
         return description;
     }
-    public void removeItem(String itemName) {
-        items.removeIf(item -> item.getName().equals(itemName));
+
+    public List<NPC> getNpcs() {
+        return npcs;
     }
-    public void removeNPC(NPC npc) {
-        npcs.remove(npc);
-    }
-    public boolean hasNPC(String name) {
-        for (NPC npc : npcs) {
-            if (npc.getName().equals(name)) return true;
-        }
-        return false;
-    }
+
+
 
     @Override
     public String toString() {
         return "Location{" +
-                "id='" + id + '\'' +
+                "id=" + id + '\'' +
                 ", description='" + description + '\'' +
                 ", neighbours=" + neighbours +
                 ", items=" + items +

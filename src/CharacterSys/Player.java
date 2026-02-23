@@ -1,32 +1,51 @@
 package CharacterSys;
 
-import InitializationSys.GameState;
-import InitializationSys.LocationType;
-import InitializationSys.World;
+import InitializationSys.*;
 import ItemSys.Item;
 import ItemSys.ItemType;
 import ItemSys.Recipe;
 import QuestSys.QuestLog;
-import InitializationSys.Location;
 import QuestSys.QuestManager;
+import ScriptSys.ScriptEngine;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
+/**
+ * Třída reprezentuje hráče ve hře. Uchovává jeho statistiky, inventář,
+ * aktuální lokaci, stav hry, seznam navštívených míst a správu úkolů.
+ * Hráč se může pohybovat, bojovat, sbírat a používat předměty,
+ * komunikovat s NPC a vyrábět nové předměty podle receptů.
+ *
+ * @author Filip Quan
+ */
 public class Player extends Character {
-    private int baseHealth;
-    private int baseStrength;
-    private Inventory inventory;
+    private final int baseHealth;
+    private final int baseStrength;
+    private final Inventory inventory;
     private Location currentLocation;
-    private Set<Location> visitedLocations;
-    private QuestLog questLog;
-    private QuestManager questManager;
+    private final Set<Location> visitedLocations;
+    private final QuestLog questLog;
+    private final QuestManager questManager;
     private GameState state = GameState.NORMAL;
-    private World world;
+    private final World world;
     private boolean escapedBasement;
+    private final ScriptEngine scriptEngine;
 
-    public Player(String name, int hp, int strength, World world, QuestManager questManager) {
+    /**
+     * Vytvoří nového hráče s počátečními statistikami, inventářem,
+     * odkazem na svět, správce úkolů a skriptovací engine.
+     *
+     * @param name         jméno hráče
+     * @param hp           počáteční zdraví
+     * @param strength     počáteční síla útoku
+     * @param world        herní svět
+     * @param questManager správce úkolů
+     * @param scriptEngine engine pro spouštění skriptovaných událostí
+     */
+    public Player(String name, int hp, int strength, World world, QuestManager questManager, ScriptEngine scriptEngine) {
         super(name, hp, strength);
         this.baseHealth = hp;
         this.baseStrength = strength;
@@ -36,67 +55,88 @@ public class Player extends Character {
         this.escapedBasement = false;
         this.world = world;
         this.questManager = questManager;
+        this.scriptEngine = scriptEngine;
     }
 
-    public void go(String input) {
+    /**
+     * Pokusí se přesunout hráče do jiné lokace.
+     * Ve FOREST se používají směry N, S, W, E.
+     * V ACADEMY lze vstoupit pouze do již navštívených míst.
+     *
+     * @param input směr nebo název místnosti
+     * @return true, pokud byl pohyb úspěšný, jinak false
+     */
+    public boolean go(String input) {
         LocationType type = currentLocation.getType();
         switch (type) {
             case FOREST -> {
                 input = input.toUpperCase();
+                // POKUD ZADÁ NEPLATNÝ INPUT
                 if (!input.equals("N") && !input.equals("S") && !input.equals("W") && !input.equals("E")) {
                     System.out.println("Invalid direction. Use N, S, W or E");
-                    return;
+                    return false;
                 }
+                // POKUD JE NA OKRAJI LESA
                 Location next = currentLocation.getNeighbours().get(input);
                 if (next == null) {
                     System.out.println("You can't go that way");
-                    return;
+                    return false;
                 }
                 currentLocation = next;
                 System.out.println("You moved to " + next.getId());
+                return true;
             }
             case ACADEMY -> {
                 input = input.toLowerCase();
                 Location next = world.getLocationByName(input);
+                // POKUD ZADÁ NEEXISTUJÍCÍ NÁZEV LOKACE
                 if (next == null || next.getType() != LocationType.ACADEMY) {
                     System.out.println("No such room in the academy");
-                    return;
+                    return false;
                 }
+                // POKUD HRÁČ NA TOMTO LOKACI NEBYL ANI JEDNOU
                 if (!visitedLocations.contains(next)) {
                     System.out.println("You haven't visited this room yet.");
-                    return;
+                    return false;
                 }
-                if (next.getId().equalsIgnoreCase("Abandoned Basement") && escapedBasement) {
+                // ZABRÁNÍ HRÁČI VSTUPU DO SKLEPY, POKUD JIŽ UNIKL
+                if (next.getId().equalsIgnoreCase(LocationNames.BASEMENT) && escapedBasement) {
                     System.out.println("You can't return to the basement. The entrance collapsed");
-                    return;
-                }
-                if (next.getId().equals("Abandoned Basement") && !escapedBasement) {
-                    enterTrapped();
+                    return false;
                 }
                 currentLocation = next;
-                System.out.println("You entered" + next.getId());
+                System.out.println("You entered " + next.getId());
+                return true;
             }
         }
+        return false;
     }
 
-    public void talkTo(String nameNPC) {
-        NPC npc = currentLocation.getNPCByName(nameNPC);
+    /**
+     * Zahájí rozhovor s NPC v aktuální lokaci.
+     * Zobrazí dialogy před akcí nebo běžné dialogy a případně spustí souboj,
+     * když npc má vlastonost zahájení souboje.
+     *
+     * @param nameNPC jméno NPC
+     * @return true, pokud rozhovor proběhl, jinak false
+     */
+    public boolean talkTo(String nameNPC) {
+        String name = nameNPC.toLowerCase();
+        NPC npc = currentLocation.getNPCByName(name);
+        // POKUD JMÉNO POSTAVY NEEXISTUJE
         if (npc == null) {
             System.out.println("There is no one named " + nameNPC + " here.");
-            return;
+            return false;
         }
-        if (npc.getName().equals("Lynne") && npc.hasPreActionDialogue()) {
+        // POKUD JMÉNO POSTAVY JE LYNNE A NEDOKONČILA DIALOG
+        if (npc.getName().equalsIgnoreCase("lynne") && npc.hasPreActionDialogue()) {
             for (String s : npc.getPreActionDialogue()) {
                 System.out.println(npc.getName() + ':' + s);
             }
-            forceMoveTo("Abandoned Basement");
-            for (String s : npc.getPostActionDialogue()) {
-                System.out.println(npc.getName() +  ':' + s);
-            }
             npc.clearPreActionDialogue();
-            npc.clearPostActionDialogue();
-            return;
+            return true;
         }
+        // POKUD DIALOG POSTAVY JE NEDOKOČEN, VYPÍŠE DIALOG, JINAK NE
         if (npc.isCompletedDialogue()) {
             System.out.println(npc.getName() + " has nothing to say.");
         } else {
@@ -105,172 +145,262 @@ public class Player extends Character {
                 npc.setCompletedDialogue(true);
             }
         }
-        questManager.checkTrigger("talk_to_npc:" + npc.getName(),this);
-        if(npc.isStartsCombat()) {
+        // POKUD NPC MÁ VLASTNOST ZAHÁJENÍ SOUBOJ, NASTAVÍ STAV HRÁČE NA COMBAT
+        if (npc.isStartsCombat()) {
             enterCombat();
         }
+        return true;
     }
 
-    public void useItem(String nameItem) {
-        Item item = inventory.getItemByName(nameItem);
+    /**
+     * Pokusí se použít předmět z inventáře.
+     * Pokud je předmět použitelný, aplikuje jeho efekt a odstraní jej z inventáře.
+     *
+     * @param nameItem název předmětu
+     * @param game     instance hry pro vyhodnocení událostí
+     * @return true, pokud byl předmět úspěšně použit, jinak false
+     */
+    public boolean useItem(String nameItem, Game game) {
+        String name = nameItem.toLowerCase();
+        Item item = inventory.getItemByName(name);
+        // POKUD V INVENTÁŘE NEOBSAHUJE ZADANÝ ITEM
         if (item == null) {
             System.out.println("You don't have that item.");
-            return;
+            return false;
         }
+        // POKUD ZADANÝ ITEM NENÍ PRO DANÝ TYP VHODNÁ
         if (item.getType() != ItemType.USABLE) {
             System.out.println("You can't use this item.");
-            return;
+            return false;
         }
         System.out.println("You used: " + item.getName());
-        item.applyUsableEffect(this);
-        questManager.checkCompletion("use_item:" + item.getName(),this);
-        inventory.removeItem(item);
+        boolean used = item.applyUsableEffect(this, world, game);
+        if (used) {
+            inventory.removeItem(item);
+        }
+        return used;
     }
 
-    public void pickUp(String itemName) {
-        Item item = currentLocation.getItem(itemName);
+    /**
+     * Pokusí se zvednout předmět z aktuální lokace.
+     * Zkontroluje kapacitu inventáře a speciální chování některých předmětů.
+     *
+     * @param itemName název předmětu
+     * @return true, pokud byl předmět zvednut, jinak false
+     */
+    public boolean pickUp(String itemName) {
+        String name = itemName.toLowerCase();
+        Item item = currentLocation.getItemByName(name);
+        // POKUD ZADANÝ ITEM V AKTUÁLNÍ MÍSTNOSTI NEEXISTUJE
         if (item == null) {
             System.out.println("No such item here.");
-            return;
+            return false;
         }
+        // POKUD INVENTÁŘ HRÁČE JE PLNÝ
         if (inventory.isFull()) {
             System.out.println("Your inventory is full.");
-            return;
+            return false;
         }
-        if (item.getName().equals("Bone") && currentLocation == world.getCurrentBoneLocation()) {
-            currentLocation.removeItem("Bone");
-            questManager.checkCompletion("pickup_item:" + item.getName(),this);
-            world.clearBoneLocation();
+        // POKUD JE ZADANÝM ITEMEM KOST, NEBUDE PŘIDÁNA DO INVENTÁŘE A BUDE ODSTRANĚNA ZE SVÉHO AKTUÁLNÍHO UMIŠTĚNÍ.
+        if (item.getName().equals("bone") && currentLocation == world.getCurrentBoneLocation()) {
+            currentLocation.removeItem(name);
             System.out.println("Togo happily takes the bone from your hands");
-            return;
+            return true;
         }
         inventory.addItem(item);
-        currentLocation.removeItem(itemName);
+        currentLocation.removeItem(name);
         System.out.println("You picked up: " + item.getName());
+        return true;
     }
 
-    public void dropItem(String itemName) {
-        Item item = inventory.getItemByName(itemName);
+    /**
+     * Odloží item z inventáře do aktuální lokace.
+     *
+     * @param itemName název itemu
+     * @return true, pokud byl item odložen, jinak false
+     */
+    public boolean dropItem(String itemName) {
+        String name = itemName.toLowerCase();
+        Item item = inventory.getItemByName(name);
         if (item == null) {
             System.out.println("You don't have that item.");
-            return;
+            return false;
         }
         inventory.removeItem(item);
         currentLocation.addItem(item);
         System.out.println("You dropped: " + item.getName());
+        return true;
     }
 
+    /**
+     * Vypíše obsah inventáře a počet volných slotů.
+     */
     public void showInventory() {
         System.out.println("Inventory:");
         inventory.printInventory();
         System.out.println("Free slots: " + inventory.getFreeSlots());
     }
 
+    /**
+     * Vypíše aktivní a dokončené úkoly hráče.
+     */
     public void showQuestLog() {
         questLog.printActiveQuests();
         questLog.printCompletedQuests();
     }
 
-    public void craftItem(String nameRecipe) {
-        Recipe recipe = world.getRecipeByName(nameRecipe);
+    /**
+     * Pokusí se vycraftit item podle receptu.
+     * Zkontroluje dostupnost ingrediencí a vytvoří výsledný item.
+     *
+     * @param nameRecipe název receptu
+     * @return true, pokud byl item úspěšně vyroben, jinak false
+     */
+    public boolean craftItem(String nameRecipe) {
+        Recipe recipe = world.getRecipeByName(nameRecipe.toLowerCase());
         if (recipe == null) {
             System.out.println("No such recipe.");
-            return;
+            return false;
         }
-        for (Item ingredient : recipe.getIngredients()) {
-            if (!inventory.hasItem(ingredient.getName())) {
-                System.out.println("Missing ingredient: " + ingredient.getName());
-                return;
+        List<String> missing = new ArrayList<>();
+        for (String ing : recipe.ingredientNames()) {
+            if (!inventory.hasItem(ing)) {
+                missing.add(ing);
             }
         }
-        for (Item ingredient : recipe.getIngredients()) {
-            Item invItem = inventory.getItemByName(ingredient.getName());
-            inventory.removeItem(invItem);
+        if (!missing.isEmpty()) {
+            System.out.println("Missing ingredients: " + String.join(", ", missing));
+            return false;
         }
-        Item result = recipe.getResult();
-        inventory.addItem(result);
-        System.out.println("You crafted: " + result.getName());
-        questManager.checkCompletion("craft_item:" + result.getName(),this);
-        questManager.checkTrigger("craft_item:" + result.getName(),this);
+        for (String ing : recipe.ingredientNames()) {
+            inventory.removeItem(inventory.getItemByName(ing));
+        }
+        inventory.addItem(recipe.createResult());
+        System.out.println("You crafted: " + recipe.result().getName());
+        return true;
     }
 
-    public void attack(String nameNPC) {
-        NPC target = currentLocation.getNPCByName(nameNPC);
+    /**
+     * Provede útok na NPC v aktuální lokaci.
+     * Zohledňuje dialog, nepřátelství, zranění, smrt NPC i hráče
+     * a vyhodnocuje úkoly a skriptované události.
+     *
+     * @param nameNPC jméno NPC
+     * @return true, pokud útok proběhl (úspěšně nebo hráč zemřel), jinak false
+     */
+    public boolean attack(String nameNPC) {
+        String targetName = nameNPC.toLowerCase();
+        NPC target = currentLocation.getNPCByName(targetName);
         if (target == null) {
             System.out.println("No such enemy here.");
-            return;
+            return false;
         }
         if (!target.isHostile()) {
             System.out.println(target.getName() + " is not hostile.");
-            return;
+            return false;
+        }
+        if (!target.isCompletedDialogue()) {
+            System.out.println("You need to complete dialogue first.");
+            return false;
         }
         System.out.println("You attacked: " + target.getName() + " for " + strength + " damage!");
         target.takeDamage(strength);
         if (!target.isAlive()) {
             System.out.println("You defeated: " + target.getName() + '!');
-            questManager.checkCompletion("defeat_enemy:" + target.getName(),this);
-            if (target.isCompletedDialogue()) {
-                System.out.println(target.getName() + " has nothing to say.");
-            } else {
-                for (String s : target.getDialogue()) {
-                    System.out.println(target.getName() + ':' + s);
-                    target.setCompletedDialogue(true);
-                }
+            TriggerEvent defeatEvent = new TriggerEvent(ActionType.ATTACK, target.getName().toLowerCase());
+            questManager.checkCompletion(defeatEvent, this, world, scriptEngine); //Zkontroluje, zda jsou po porážce nepřítele splněny nějaké úkoly.
+            for (String s : target.getDialogue()) {
+                System.out.println(target.getName() + ':' + s); // VYPÍŠE DIALOG NPC PO PORÁŽCE
             }
-            currentLocation.removeNPC(target);
+            target.setCompletedDialogue(true);
             resetCombatEffect();
             leaveCombat();
-            return;
+            questManager.checkTrigger(defeatEvent, this, world);
+            currentLocation.removeNPC(target);
+            return true;
         }
         System.out.println(target.getName() + " attacks you for " + target.getStrength() + " damage!");
         this.takeDamage(target.getStrength());
-        for (Item item : inventory.getItems()) {
+        for (Item item : inventory.items()) {
             if (item.getType() == ItemType.AUTO) {
-                item.applyAutoEffect(this);
+                item.applyAutoEffect(this); // Zkontroluje, zda je automatický aktivovaný nějaký item z inventáře
             }
         }
         System.out.println("Player health: " + this.health);
         System.out.println("Enemy health: " + target.getHealth());
         if (!this.isAlive()) {
-            System.out.println("You died!");
-            return;
+            if (targetName.equals("rovan")) {
+                System.out.println("Togo sacrificed himself to save you from death.");
+                System.out.println("Your anger ignited a strength you didn’t know you had, and you defeated the enemy.");
+            } else {
+                System.out.println("You died!");
+            }
+            return true;
         }
         enterCombat();
+        return true;
     }
 
+    /**
+     * Přesune hráče do zadané lokace bez kontrol (používá se pro skripty).
+     * Zaznamená lokaci jako navštívenou a aktivuje stav TRAPPED, pokud jde o sklep.
+     *
+     * @param locationName název lokace
+     */
     public void forceMoveTo(String locationName) {
         Location next = world.getLocationByName(locationName.toLowerCase());
         if (next == null) {
             System.out.println("Error: location does not exist");
             return;
         }
+        if (next == world.getLocationByName(LocationNames.BASEMENT)) {
+            enterTrapped();
+        }
         visitedLocations.add(currentLocation);
         visitedLocations.add(next);
         currentLocation = next;
     }
+
+    /**
+     * Obnoví hráčovo zdraví a sílu na základní hodnoty.
+     */
     public void resetCombatEffect() {
         health = baseHealth;
         strength = baseStrength;
     }
+
+    /**
+     * Nastaví stav hráče na COMBAT a oznámí začátek souboje.
+     */
     public void enterCombat() {
         this.state = GameState.COMBAT;
+        System.out.println();
         System.out.println("You're combat!");
     }
 
+    /**
+     * Ukončí souboj a nastaví stav hráče na NORMAL.
+     */
     public void leaveCombat() {
         this.state = GameState.NORMAL;
         System.out.println("Combat ended!");
     }
 
+    /**
+     * Nastaví stav hráče na TRAPPED (uvězněn ve sklepě).
+     */
     public void enterTrapped() {
         this.state = GameState.TRAPPED;
-        System.out.println("You're trapped in the basement!");
     }
 
+    /**
+     * Ukončí stav TRAPPED a oznámí únik ze sklepa.
+     */
     public void leaveTrapped() {
         this.state = GameState.NORMAL;
         System.out.println("You escaped the basement!");
     }
+
     public GameState getState() {
         return state;
     }
@@ -278,25 +408,49 @@ public class Player extends Character {
     public Location getCurrentLocation() {
         return currentLocation;
     }
+
     public QuestLog getQuestLog() {
         return questLog;
+    }
+
+    public Inventory getInventory() {
+        return inventory;
     }
 
     public boolean isEscapedBasement() {
         return escapedBasement;
     }
+
+    public Set<Location> getVisitedLocations() {
+        return visitedLocations;
+    }
+
     public void setHeath(int heath) {
         this.health = heath;
     }
+
     public void setStrength(int strength) {
         this.strength = strength;
     }
+
     public void setEscapedBasement(boolean escaped) {
         this.escapedBasement = escaped;
     }
+
     public void setCurrentLocation(Location currentLocation) {
         this.currentLocation = currentLocation;
     }
+
+    public void setState(GameState state) {
+        this.state = state;
+    }
+
+    /**
+     * Sníží zdraví hráče o zadanou hodnotu zranění.
+     * Pokud zdraví klesne na nulu nebo méně, nastaví se na nulu.
+     *
+     * @param amount množství zranění
+     */
     @Override
     public void takeDamage(int amount) {
         health -= amount;

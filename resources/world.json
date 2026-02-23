@@ -1,7 +1,7 @@
 {
   "locations": [
     {
-      "id": "Student Dormitory",
+      "id": "Dormitory",
       "description": "A divided dorm with separate areas for nobles and common students.",
       "items": [],
       "npcs": [
@@ -23,7 +23,7 @@
         {
           "name": "Rovan",
           "health": 150,
-          "strength": 40,
+          "strength": 25,
           "hostile": true,
           "startsCombat": true,
           "preActionDialogue": [
@@ -38,19 +38,19 @@
       ]
     },
     {
-      "id": "Basic Magic Classroom",
+      "id": "Classroom",
       "description": "Rows of desks, simple magical diagrams on the walls, and a cabinet of teaching tools.",
       "items": [],
       "npcs": []
     },
     {
-      "id": "Advanced Spell Laboratory",
+      "id": "Laboratory",
       "description": "A large central worktable, instruments and vials on side desks, and marked circles for experiments.",
       "items": [],
       "npcs": []
     },
     {
-      "id": "Silent Study Room",
+      "id": "Library",
       "description": "Long tables, tall bookshelves, a reading carpet, and a quiet corner with lamps.",
       "items": [],
       "npcs": [
@@ -66,45 +66,45 @@
             "Just step inside. I’ll close the door so no one interrupts us."
           ],
           "postActionDialogue": [
-            "Did you really think you could outshine me forever?",
-            "Maybe now you’ll finally understand your place."
+            "Wait… how could you escape?",
+            "You won’t be able to forget me. Not after this"
           ]
         }
       ]
     },
     {
-      "id": "Illusion Classroom",
+      "id": "Illusion Room",
       "description": "A nearly empty room with mirrors, an illusion control panel, and marked circles for practice.",
       "items": [],
       "npcs": []
     },
     {
-      "id": "Healing Magic Department",
+      "id": "Healing Room",
       "description": "Beds for healing practice, herb cabinets, a worktable, and shelves of potions.",
       "items": [],
       "npcs": []
     },
     {
-      "id": "Magical Supplies Storage",
+      "id": "Storage",
       "description": "Shelves of crates and boxes, a sorting table, a locked chest, and an inventory list on the wall.",
       "items": [],
       "npcs": []
     },
     {
-      "id": "Abandoned Basement",
+      "id": "Basement",
       "description": "A forgotten room filled with dust, old supplies, and the secrets of Mia’s disappearance.",
       "items": [
         {
-          "name": "Potion of Strength",
-          "description": "A very rare potion. No one would expect to find it in an abandoned room. When consumed, it greatly increases the drinker's strength. Can be used only once.",
+          "name": "Power potion",
+          "description": "When consumed, it greatly increases the drinker's strength. Can be used only once.",
           "type": "USABLE",
           "properties": {
             "strengthMultiplier": 2.0
           }
         },
         {
-          "name": "Totem of Immortality",
-          "description": "A legendary artifact that does not appear under normal circumstances. According to legend, the totem activates automatically when its bearer is on the brink of death, protecting their life and generating a temporary shield.",
+          "name": "Totem",
+          "description": "According to legend, the totem activates automatically when its bearer is on the brink of death, protecting their life.",
           "type": "AUTO",
           "properties": {
             "reviveHealth": 50
@@ -136,49 +136,49 @@
     {
       "name": "Defeat Elian",
       "description": "Elian stands in your way. Defeat him to prove your strength and continue your journey.",
-      "trigger": "talk_to_npc:Elian",
-      "completion": "defeat_enemy:Elian"
+      "trigger": ["talk_to_npc:Elian"],
+      "completion": ["defeat_enemy:Elian"]
     },
     {
-      "name": "Craft an explosive",
+      "name": "Craft an TNT",
       "description": "Gather the necessary materials and craft an improvised explosive device.",
-      "trigger": "enter_location:Abandoned Basement",
-      "completion": "craft_item:Explosive"
+      "trigger": ["talk_to_npc:Lynne"],
+      "completion": ["craft_item:TNT"]
     },
     {
       "name": "Find Exit",
       "description": "Use your crafted explosive to blow the exit door and escape the basement.",
-      "trigger": "craft_item:Explosive",
-      "completion": "use_item:Explosive"
+      "trigger": ["craft_item:TNT"],
+      "completion": ["use_item:TNT"]
     },
     {
       "name": "Defeat the criminal Rovan",
       "description": "Rovan is a dangerous criminal hiding in the forest. Track him down and defeat him.",
-      "trigger": "talk_to_npc:Rovan",
-      "completion": "defeat_enemy:Rovan"
+      "trigger": ["talk_to_npc:Rovan"],
+      "completion": ["defeat_enemy:Rovan"]
     },
     {
       "name": "Find a bone for Togo",
       "description": "Togo is hungry and needs a bone to feed himself. Search the area and bring him one.",
-      "trigger": null,
-      "completion": "pickup_item:Bone"
+      "trigger": ["defeat_enemy:Elian", "use_item:TNT"],
+      "completion": ["pickup_item:Bone"]
     }
   ],
   "recipes": [
     {
-      "name": "Explosive",
+      "name": "TNT",
       "ingredients": [
         { "name": "Gunpowder" },
         { "name": "Sand" },
         { "name": "Gravel" }
       ],
       "result": {
-        "name": "Explosive",
+        "name": "TNT",
         "description": "A powerful improvised explosive.",
         "type": "USABLE",
         "properties": {
           "explode": "The explosive detonates and blows open the door!",
-          "usabledOnlyIn": "Abandoned Basement"
+          "usabledOnlyIn": "Basement"
         }
       }
     }
