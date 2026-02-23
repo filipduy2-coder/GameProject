@@ -1,0 +1,186 @@
+{
+  "locations": [
+    {
+      "id": "Dormitory",
+      "description": "A divided dorm with separate areas for nobles and common students.",
+      "items": [],
+      "npcs": [
+        {
+          "name": "Elian",
+          "health": 100,
+          "strength": 20,
+          "hostile": true,
+          "startsCombat": true,
+          "preActionDialogue": [
+            "Move aside, commoner.",
+            "People like you don’t belong near me."
+          ],
+          "postActionDialogue": [
+            "Don’t think you’re better than me.",
+            "My father won’t hear about this."
+          ]
+        },
+        {
+          "name": "Rovan",
+          "health": 150,
+          "strength": 25,
+          "hostile": true,
+          "startsCombat": true,
+          "preActionDialogue": [
+            "So you came to stare at the monster… just like everyone else.",
+            "I don’t trust anyone. And you won’t be an exception."
+          ],
+          "postActionDialogue": [
+            "Don’t look at me like that… I lost, but you didn’t break me.",
+            "The world may have rejected me, but I will never bow."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "Classroom",
+      "description": "Rows of desks, simple magical diagrams on the walls, and a cabinet of teaching tools.",
+      "items": [],
+      "npcs": []
+    },
+    {
+      "id": "Laboratory",
+      "description": "A large central worktable, instruments and vials on side desks, and marked circles for experiments.",
+      "items": [],
+      "npcs": []
+    },
+    {
+      "id": "Library",
+      "description": "Long tables, tall bookshelves, a reading carpet, and a quiet corner with lamps.",
+      "items": [],
+      "npcs": [
+        {
+          "name": "Lynne",
+          "health": 100,
+          "strength": 10,
+          "hostile": false,
+          "startsCombat": false,
+          "preActionDialogue": [
+            "Mia, you always look so calm… it’s honestly inspiring.",
+            "Could you come with me for a moment? I want to show you something downstairs.",
+            "Just step inside. I’ll close the door so no one interrupts us."
+          ],
+          "postActionDialogue": [
+            "Wait… how could you escape?",
+            "You won’t be able to forget me. Not after this"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "Illusion Room",
+      "description": "A nearly empty room with mirrors, an illusion control panel, and marked circles for practice.",
+      "items": [],
+      "npcs": []
+    },
+    {
+      "id": "Healing Room",
+      "description": "Beds for healing practice, herb cabinets, a worktable, and shelves of potions.",
+      "items": [],
+      "npcs": []
+    },
+    {
+      "id": "Storage",
+      "description": "Shelves of crates and boxes, a sorting table, a locked chest, and an inventory list on the wall.",
+      "items": [],
+      "npcs": []
+    },
+    {
+      "id": "Basement",
+      "description": "A forgotten room filled with dust, old supplies, and the secrets of Mia’s disappearance.",
+      "items": [
+        {
+          "name": "Power potion",
+          "description": "When consumed, it greatly increases the drinker's strength. Can be used only once.",
+          "type": "USABLE",
+          "properties": {
+            "strengthMultiplier": 2.0
+          }
+        },
+        {
+          "name": "Totem",
+          "description": "According to legend, the totem activates automatically when its bearer is on the brink of death, protecting their life.",
+          "type": "AUTO",
+          "properties": {
+            "reviveHealth": 50
+          }
+        },
+        {
+          "name": "Gunpowder",
+          "description": "A common material often used in weapon crafting. It has no function on its own — its value appears only when combined with the right materials.",
+          "type": "CRAFTING",
+          "properties": {}
+        },
+        {
+          "name": "Sand",
+          "description": "A basic material with no standalone use. Serves as a raw crafting ingredient.",
+          "type": "CRAFTING",
+          "properties": {}
+        },
+        {
+          "name": "Gravel",
+          "description": "A common material without its own function. Used in crafting.",
+          "type": "CRAFTING",
+          "properties": {}
+        }
+      ],
+      "npcs": []
+    }
+  ],
+  "quests": [
+    {
+      "name": "Defeat Elian",
+      "description": "Elian stands in your way. Defeat him to prove your strength and continue your journey.",
+      "trigger": ["talk_to_npc:Elian"],
+      "completion": ["defeat_enemy:Elian"]
+    },
+    {
+      "name": "Craft an TNT",
+      "description": "Gather the necessary materials and craft an improvised explosive device.",
+      "trigger": ["talk_to_npc:Lynne"],
+      "completion": ["craft_item:TNT"]
+    },
+    {
+      "name": "Find Exit",
+      "description": "Use your crafted explosive to blow the exit door and escape the basement.",
+      "trigger": ["craft_item:TNT"],
+      "completion": ["use_item:TNT"]
+    },
+    {
+      "name": "Defeat the criminal Rovan",
+      "description": "Rovan is a dangerous criminal hiding in the forest. Track him down and defeat him.",
+      "trigger": ["talk_to_npc:Rovan"],
+      "completion": ["defeat_enemy:Rovan"]
+    },
+    {
+      "name": "Find a bone for Togo",
+      "description": "Togo is hungry and needs a bone to feed himself. Search the area and bring him one.",
+      "trigger": ["defeat_enemy:Elian", "use_item:TNT"],
+      "completion": ["pickup_item:Bone"]
+    }
+  ],
+  "recipes": [
+    {
+      "name": "TNT",
+      "ingredients": [
+        { "name": "Gunpowder" },
+        { "name": "Sand" },
+        { "name": "Gravel" }
+      ],
+      "result": {
+        "name": "TNT",
+        "description": "A powerful improvised explosive.",
+        "type": "USABLE",
+        "properties": {
+          "explode": "The explosive detonates and blows open the door!",
+          "usabledOnlyIn": "Basement"
+        }
+      }
+    }
+  ]
+}
