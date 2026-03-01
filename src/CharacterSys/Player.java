@@ -391,6 +391,7 @@ public class Player extends Character {
      */
     public void enterTrapped() {
         this.state = GameState.TRAPPED;
+        System.out.println("You're trapped!");
     }
 
     /**
